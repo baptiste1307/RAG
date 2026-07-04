@@ -1,0 +1,91 @@
+# uv sync : 
+# - créer ou mettre à jour le venv
+# - installe les dépendances
+# - supprime celles qui ne sont plus nécessaires
+# - synchronise exactement l’environnement avec le projet
+
+# --extra dev : 
+# installe aussi les dépendances optionnelles appelées "dev".
+
+# pour ajouter une dependance: uv add nom.
+# uv va choisir une version compatible avec l'environnement Python
+# l’écrire dans pyproject.toml
+# lock la version exacte dans uv.lock
+
+[project]
+name = "rag-against-the-machine"
+version = "0.1.0"
+description = "A RAG system to answer questions about the vLLM codebase."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "accelerate>=1.13.0",
+    "bm25s>=0.2.0",
+    "fire>=0.6.0",
+    "pydantic>=2.0.0",
+    "torch>=2.12.0",
+    "tqdm>=4.66.0",
+    "transformers>=5.9.0",
+    "flake8>=7.0.0",
+    "mypy>=1.8.0",
+    "black>=26.5.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "black>=26.5.1",
+]
+
+[tool.uv]
+# le projet est considéré comme un package Python installable.
+package = true
+
+[tool.black]
+line-length = 79
+target-version = ["py310"]
+
+# setuptools￼est l’outil classique pour créer des packages Python.
+[tool.setuptools.packages.find]
+# les packages Python se trouvent dans le dossier src/.
+where = ["src"]
+
+
+# indique comment construire le projet.
+[build-system]
+# Le projet a besoin de setuptools version 68 minimum pour être compilé/installé.
+requires = ["setuptools>=68.0.0"]
+# Cela dit à Python utilise setuptools pour construire le package.
+build-backend = "setuptools.build_meta"
+
+
+[tool.mypy]
+python_version = "3.10"
+# Avertit si une fonction retourne Any.
+warn_return_any = true
+# détecte les "#type: ignore" inutiles
+warn_unused_ignores = true
+# Ignore les erreurs quand certaines libs n’ont pas de types.
+# Très fréquent avec vieilles libs/libs ML
+ignore_missing_imports = true
+# interdit les fonctions sans annotations
+disallow_untyped_defs = true
+# même les fonctions non typées seront analysées
+check_untyped_defs = true
+
+[tool.flake8]
+max-line-length = 80
+# ignore certains conflits avec Black
+extend-ignore = ["E203", "W503"]
+# listes des dossiers ignorés par Flake8
+exclude = [
+    ".venv",
+    "venv",
+    ".git",
+    "__pycache__",
+    ".mypy_cache",
+    ".pytest_cache",
+    "data",
+    "vllm-0.10.1",
+    "moulinette_pkg",
+]
